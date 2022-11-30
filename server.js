@@ -86,7 +86,7 @@ app.get("/menuOrder", async (req, res) => {
 })
 
 
-const port = process.env.SERVER_PORT;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
   console.log(`Server has started on port ${port}`);
 });
