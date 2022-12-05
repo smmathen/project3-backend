@@ -22,6 +22,15 @@ app.get("/menuUser", async (req, res) => {
   }
 });
 
+app.get("/restockReport", async (req, res) => {
+  try {
+    const resport = await pool.query("SELECT * FROM inventory WHERE quantity < low");
+    res.json(allMenu.rows);
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
 app.post("/userAuth", async (req, res) => {
   const { pin } = req.body;
   try {
@@ -48,31 +57,6 @@ app.post("/userAuth", async (req, res) => {
   }
 })
 
-app.post("/submitOrder", async (req, res) => {
-  const { timeStamp, order, orderTaker, total } = req.body;
-
-  // try {
-  //   const employee = await pool.query(
-  //     "SELECT pin FROM staff WHERE name = $1;",
-  //     [orderTaker]
-  //   );
-  //   pin = parseInt(employee.rows[0].pin);
-  // } catch (err) {
-  //   console.log(err.message);
-  // }
-
-  try {
-    const success = await pool.query(
-      "INSERT INTO orders(tstamp, items, ordertaker, total) VALUES ($1, $2, $3, $4);",
-      [timeStamp, order, orderTaker, total]
-    );
-    res.status(200).send(true);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).send(false);
-  }
-})
-
 
 app.get("/menuOrder", async (req, res) => {
   try {
@@ -84,9 +68,83 @@ app.get("/menuOrder", async (req, res) => {
     console.log(err.message);
   }
 })
+//Staff members ROUTES
+
+//create a staff member
+//this one might work but probally doesn't
+app.post("/manStaff", async (req, res) => {
+  try {
+    console.log(req.body);
+    const { name, role, pin } = req.body;
+    const newStaff = await pool.query(
+      "INSERT INTO staff(name,role,pin) VALUES ($1,$2,$3) Returning * ;", [name, role, pin]
+    );
+    console.log(req.body);
+    res.json(newStaff.rows[0]);
+  } catch (err) {
+    console.log(err.message);
+  }
+})
+
+//delete a staff member
+app.delete("/manStaff/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteStaff = await pool.query(
+      "DELETE FROM staff where pin = $1;", [id]
+    );
+    res.json("Staff Member Removed");
+  } catch (err) {
+    console.log(err.message);
+  }
+})
 
 
-const port = process.env.PORT || 3001;
+//get all Staff
+app.get("/manStaff", async (req, res) => {
+  try {
+
+    const allStaff = await pool.query(
+      "SELECT * FROM staff;"
+    );
+    console.log(req.body);
+    res.json(allStaff.rows);
+  } catch (err) {
+    console.log(err.message);
+  }
+})
+
+//get 1 staff
+app.get("/manStaff/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(req.body);
+    const allStaff = await pool.query(
+      "SELECT * FROM staff where pin  = $1;", [id]
+    );
+    res.json(allStaff.rows[0]);
+  } catch (err) {
+    console.log(err.message);
+  }
+})
+
+//TODO update 1 staff
+app.put("/manStaff/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, role, pin } = req.body;
+    const updateStaff = await pool.query(
+      "UPDATE staff SET name=$1, role = $2 WHERE pin = $3;", [name, role, pin]
+    );
+    res.json("Staff member was updated");
+  } catch (err) {
+    console.log(err.message);
+  }
+})
+
+
+
+const port = process.env.SERVER_PORT;
 app.listen(port, () => {
   console.log(`Server has started on port ${port}`);
 });
