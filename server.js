@@ -24,8 +24,8 @@ app.get("/menuUser", async (req, res) => {
 
 app.get("/restockReport", async (req, res) => {
   try {
-    const resport = await pool.query("SELECT * FROM inventory WHERE quantity < low");
-    res.json(allMenu.rows);
+    const report = await pool.query("SELECT * FROM inventory WHERE quantity < low");
+    res.json(report.rows);
   } catch (err) {
     console.log(err.message);
   }
