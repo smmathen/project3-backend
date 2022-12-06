@@ -2,13 +2,34 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const pool = require("./db");
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUI = require("swagger-ui-express")
+
+const options = {
+  definition: {
+    info: {
+      title: 'Cabo Grill Website - Team 17',
+      version: '1.0.0',
+      description: "Website designed for Cabo Grill customers, servers, and managers."
+    }
+  },
+  apis: ['server.js'],
+};
+
+const swaggerDocs = swaggerJsdoc(options);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
 
 // middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
-// get all menu items
+/**
+ * @swagger
+ * /menuUser:
+ *   get:
+ *     description: Gets name, ingredients, and price from the menu table in the database. Populates webpage as a json object.
+ *      
+ */
 app.get("/menuUser", async (req, res) => {
   try {
     const allMenu = await pool.query(
@@ -22,15 +43,37 @@ app.get("/menuUser", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /restockReport:
+ *   get:
+ *     description: Queries database for items for the restock report. Returns data as a json object
+ *      
+ */
 app.get("/restockReport", async (req, res) => {
   try {
-    const report = await pool.query("SELECT * FROM inventory WHERE quantity < low");
-    res.json(report.rows);
+    const resport = await pool.query("SELECT * FROM inventory WHERE quantity < low");
+    res.json(allMenu.rows);
   } catch (err) {
     console.log(err.message);
   }
 });
 
+
+
+
+/**
+ * @swagger
+ * /userAuth:
+ *   post:
+ *     description: Queries database for an employee based on user input.
+ *     parameters:
+ *      - name: req
+ *        description: Request body with information from user's input
+ *      - name: res
+ *        description: Response body with information after authenticating user
+ *      
+ */
 app.post("/userAuth", async (req, res) => {
   const { pin } = req.body;
   try {
@@ -57,7 +100,16 @@ app.post("/userAuth", async (req, res) => {
   }
 })
 
-
+/**
+ * @swagger
+ * /menuOrder:
+ *   get:
+ *     description: Queries database for name and price of the all menu items.
+ *     parameters:
+ *      - name: res
+ *        description: Response body with information after returning from database, sent as a JSON
+ *      
+ */
 app.get("/menuOrder", async (req, res) => {
   try {
     const allMenu = await pool.query(
@@ -72,6 +124,18 @@ app.get("/menuOrder", async (req, res) => {
 
 //create a staff member
 //this one might work but probally doesn't
+/**
+ * @swagger
+ * /manStaff:
+ *   post:
+ *     description: Inserts a new employee into the database.
+ *     parameters:
+ *      - name: req
+ *        description: Request body with information from manager's input, contains the name, role, and pin of new employee.
+ *      - name: res
+ *        description: Response body with reponse back from database after input is successful.
+ *      
+ */
 app.post("/manStaff", async (req, res) => {
   try {
     console.log(req.body);
@@ -87,6 +151,18 @@ app.post("/manStaff", async (req, res) => {
 })
 
 //delete a staff member
+/**
+ * @swagger
+ * /manStaff/:id:
+ *   delete:
+ *     description: Deletes an employee from the database after user is inputted by manager.
+ *     parameters:
+ *      - name: req
+ *        description: Request body with information from user's input
+ *      - name: res
+ *        description: Response body with string as a JSON that confirms that the employee has been removed.
+ *      
+ */
 app.delete("/manStaff/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -101,6 +177,16 @@ app.delete("/manStaff/:id", async (req, res) => {
 
 
 //get all Staff
+/**
+ * @swagger
+ * /manStaff:
+ *   get:
+ *     description: Gets all staff members from the database.
+ *     parameters:
+ *      - name: res
+ *        description: Response body with all staff members returned as an Object
+ *      
+ */
 app.get("/manStaff", async (req, res) => {
   try {
 
@@ -115,6 +201,18 @@ app.get("/manStaff", async (req, res) => {
 })
 
 //get 1 staff
+/**
+ * @swagger
+ * /manStaff/:id:
+ *   get:
+ *     description: Queries database for a single employee based on an input from the user.
+ *     parameters:
+ *      - name: req
+ *        description: Request body with the pin number of the employee being searched for
+ *      - name: res
+ *        description: Response body with information from the employee being returned
+ *      
+ */
 app.get("/manStaff/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -129,6 +227,18 @@ app.get("/manStaff/:id", async (req, res) => {
 })
 
 //TODO update 1 staff
+/**
+ * @swagger
+ * /manStaff/:id:
+ *   put:
+ *     description: Updates employee information based on if the manager chooses to edit one.
+ *     parameters:
+ *      - name: req
+ *        description: Request body with new name, role, and pin for set manager. Also contains previous pin to search for user.
+ *      - name: res
+ *        description: Response if staff member was successfully updated
+ *      
+ */
 app.put("/manStaff/:id", async (req, res) => {
   try {
     const { id } = req.params;
