@@ -2,6 +2,14 @@ import React, { Fragment } from "react";
 import Seo from "./Seo";
 import MAP_KEY from "../secrets";
 
+/**
+ * @swagger
+ * Map:
+ *   get:
+ *     description: Displays the location of the restaurant on a page for the user to view.
+ *     summary: Utilizes Google Maps API to show current location   
+ *     parameters:
+ */
 const Map = () => {
   return (
     <Fragment>

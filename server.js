@@ -13,7 +13,7 @@ const options = {
       description: "Website designed for Cabo Grill customers, servers, and managers."
     }
   },
-  apis: ['server.js', "components/Login.js"],
+  apis: ['server.js', "components/*", "pages/*.js"],
 };
 
 const swaggerDocs = swaggerJsdoc(options);
@@ -27,7 +27,7 @@ app.use(express.json());
  * @swagger
  * /menuUser:
  *   get:
- *     description: Gets name, ingredients, and price from the menu table in the database. Populates webpage as a json object.
+ *     summary: Gets name, ingredients, and price from the menu table in the database. Populates webpage as a json object.
  *      
  */
 app.get("/menuUser", async (req, res) => {
@@ -47,13 +47,13 @@ app.get("/menuUser", async (req, res) => {
  * @swagger
  * /restockReport:
  *   get:
- *     description: Queries database for items for the restock report. Returns data as a json object
+ *     summary: Queries database for items for the restock report. Returns data as a json object
  *      
  */
 app.get("/restockReport", async (req, res) => {
   try {
-    const resport = await pool.query("SELECT * FROM inventory WHERE quantity < low");
-    res.json(allMenu.rows);
+    const report = await pool.query("SELECT * FROM inventory WHERE quantity < low");
+    res.json(report.rows);
   } catch (err) {
     console.log(err.message);
   }
@@ -66,7 +66,7 @@ app.get("/restockReport", async (req, res) => {
  * @swagger
  * /userAuth:
  *   post:
- *     description: Queries database for an employee based on user input.
+ *     summary: Queries database for an employee based on user input.
  *     parameters:
  *      - name: req
  *        description: Request body with information from user's input
@@ -104,7 +104,7 @@ app.post("/userAuth", async (req, res) => {
  * @swagger
  * /menuOrder:
  *   get:
- *     description: Queries database for name and price of the all menu items.
+ *     summary: Queries database for name and price of the all menu items.
  *     parameters:
  *      - name: res
  *        description: Response body with information after returning from database, sent as a JSON
@@ -128,7 +128,7 @@ app.get("/menuOrder", async (req, res) => {
  * @swagger
  * /manStaff:
  *   post:
- *     description: Inserts a new employee into the database.
+ *     summary: Inserts a new employee into the database.
  *     parameters:
  *      - name: req
  *        description: Request body with information from manager's input, contains the name, role, and pin of new employee.
@@ -155,7 +155,7 @@ app.post("/manStaff", async (req, res) => {
  * @swagger
  * /manStaff/:id:
  *   delete:
- *     description: Deletes an employee from the database after user is inputted by manager.
+ *     summary: Deletes an employee from the database after user is inputted by manager.
  *     parameters:
  *      - name: req
  *        description: Request body with information from user's input
@@ -181,7 +181,7 @@ app.delete("/manStaff/:id", async (req, res) => {
  * @swagger
  * /manStaff:
  *   get:
- *     description: Gets all staff members from the database.
+ *     summary: Gets all staff members from the database.
  *     parameters:
  *      - name: res
  *        description: Response body with all staff members returned as an Object
@@ -205,7 +205,7 @@ app.get("/manStaff", async (req, res) => {
  * @swagger
  * /manStaff/:id:
  *   get:
- *     description: Queries database for a single employee based on an input from the user.
+ *     summary: Queries database for a single employee based on an input from the user.
  *     parameters:
  *      - name: req
  *        description: Request body with the pin number of the employee being searched for
@@ -231,7 +231,7 @@ app.get("/manStaff/:id", async (req, res) => {
  * @swagger
  * /manStaff/:id:
  *   put:
- *     description: Updates employee information based on if the manager chooses to edit one.
+ *     summary: Updates employee information based on if the manager chooses to edit one.
  *     parameters:
  *      - name: req
  *        description: Request body with new name, role, and pin for set manager. Also contains previous pin to search for user.
