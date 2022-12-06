@@ -13,7 +13,7 @@ const options = {
       description: "Website designed for Cabo Grill customers, servers, and managers."
     }
   },
-  apis: ['server.js'],
+  apis: ['server.js', "components/Login.js"],
 };
 
 const swaggerDocs = swaggerJsdoc(options);
