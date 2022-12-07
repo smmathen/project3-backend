@@ -252,6 +252,42 @@ app.put("/manStaff/:id", async (req, res) => {
   }
 })
 
+/**
+ * @swagger
+ * /submitOrder:
+ *   post:
+ *     summary: Sumbits an order when a user or server submits it in the frontend
+ *     parameters:
+ *      - name: req
+ *        description: Request body with timestamp, order, ordert taker, and price of order.
+ *      - name: res
+ *        description: Response if order was successfully inputted.
+ *      
+ */
+app.post("/submitOrder", async (req, res) => {
+  const { timeStamp, order, orderTaker, total } = req.body;
+  let pin = 0;
+  try {
+    const employee = await pool.query(
+      "SELECT pin FROM staff WHERE name = $1;",
+      [orderTaker]
+    );
+    pin = parseInt(employee.rows[0].pin);
+  } catch (err) {
+    console.log(err.message);
+  }
+
+  try {
+    const success = await pool.query(
+      "INSERT INTO orders(tstamp, items, ordertaker, total) VALUES ($1, $2, $3, $4);",
+      [timeStamp, order, pin, total]
+    );
+    res.status(200).send(true);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send(false);
+  }
+})
 
 
 const port = process.env.SERVER_PORT;
