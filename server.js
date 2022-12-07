@@ -111,6 +111,28 @@ app.post("/salesReport", async (req, res) => {
   }
 });
 
+app.post("/staffReport", async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+    const report = await pool.query(
+      "SELECT s.name, count(orderTaker) AS order_count FROM Orders o JOIN Staff s ON s.pin = o.ordertaker WHERE tstamp >=$1 AND tstamp<=$2 GROUP BY s.name ORDER BY order_count DESC LIMIT 3;", [startDate, endDate]);
+    if (report.rowCount == 0) {
+      const msg = {
+        success: false,
+        staff_info: [null]
+      }
+      res.status(500).send(msg);
+    } else {
+      const msg = {
+        success: true,
+        staff_info: report.rows
+      }
+      res.status(200).send(msg);
+    }
+  } catch (err) {
+    console.log(err.message);
+  }
+})
 
 
 /**
