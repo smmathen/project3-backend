@@ -1,6 +1,14 @@
 //not ready
 import React, { Fragment, useState } from "react";
 
+
+/** 
+ * @swagger
+* InputInvent:
+*   put:
+*     description: Allows a manager to input a new inventory item
+*     summary: Allows a manager to input a new inventory item
+*/
 const InputInven = () => {
   const [name, setName] = useState("");
   const [unit, setUnit] = useState("");
@@ -10,7 +18,13 @@ const InputInven = () => {
 
 
 
-
+  /** 
+   * @swagger
+ * onSubmitForm:
+ *   get:
+ *     description: Gets inventory items on click
+ *     summary: Gets inventory items on click
+ */
   const onSubmitForm = async e => {
     e.preventDefault();
     try {
@@ -41,28 +55,28 @@ const InputInven = () => {
         <input
           type="text"
           className="form-control"
-          value={role}
+          value={unit}
           placeholder="Set Unit"
           onChange={e => setUnit(e.target.value)}
         />
         <input
           type="text"
           className="form-control"
-          value={pin}
+          value={quantity}
           placeholder="Set Quantity"
           onChange={e => setQuantity(e.target.value)}
         />
         <input
           type="text"
           className="form-control"
-          value={pin}
+          value={low}
           placeholder="Set Low"
           onChange={e => setLow(e.target.value)}
         />
         <input
           type="text"
           className="form-control"
-          value={pin}
+          value={price}
           placeholder="Set Price"
           onChange={e => setPrice(e.target.value)}
         />
