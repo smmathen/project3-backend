@@ -4,7 +4,13 @@ import SalesReportItem from "../components/SalesReportItem";
 import Seo from "../components/Seo";
 
 
-
+/** 
+ * @swagger
+* SalesReport:
+*   get:
+*     description: Displays the sales report to manager
+*     summary: Displays the sales report to the manager
+*/
 const SalesReport = () => {
     const [report, setReport] = useState([]);
     const [count_pair, setCountPair] = useState([]);
@@ -16,13 +22,13 @@ const SalesReport = () => {
     const getSalesReport = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`http://localhost:3001/salesReport`, {
+            const response = await fetch("https://project3-backend.onrender.com/salesReport", {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({"startDate": startDate, "endDate": endDate})
+                body: JSON.stringify({ "startDate": startDate, "endDate": endDate })
 
             })
                 .then(response => response.json())

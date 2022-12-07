@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import Seo from "../components/Seo";
 import styles from "../styles/login.module.css";
 
+/** 
+ * @swagger
+* Login:
+*   post:
+*     description: Allows an authorized user to log in
+*     summary: Allows an authorized user to log in
+*/
 export default function Login() {
     const [user, setUser] = useState("");
     const [auth, setAuth] = useState(false);
@@ -9,7 +16,7 @@ export default function Login() {
     const authUser = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:3001/userAuth", {
+            const response = await fetch("http://project3-backend.onrender.com/userAuth", {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
@@ -39,7 +46,7 @@ export default function Login() {
             <div className={styles.login}>
                 <div className={styles.loginWrapper}>
                     <div className={styles.loginLeft}>
-                        <img src="logo.jpeg" className={styles.loginLogo} placeholder="logo" alt="another logo for " />
+                        <img src="logo.jpeg" className={styles.loginLogo} placeholder="logo" alt="another logo for cabo" />
                         <span className={styles.loginDesc}>Hola amigos! Join our team! <p className={styles.hashTag}>#justcabo</p></span>
                     </div>
                     <div className={styles.loginRight}>
