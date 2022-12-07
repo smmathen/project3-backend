@@ -1,3 +1,4 @@
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -247,6 +248,148 @@ app.put("/manStaff/:id", async (req, res) => {
       "UPDATE staff SET name=$1, role = $2 WHERE pin = $3;", [name, role, pin]
     );
     res.json("Staff member was updated");
+  } catch (err) {
+    console.log(err.message);
+  }
+})
+
+//Menu item ROUTES
+
+//create a menu item
+/**
+ * @swagger
+ * /manMenu:
+ *   post:
+ *     summary: Inserts a new item into the menu
+ *     parameters:
+ *      - name: req
+ *        description: Request body with information about the menu items name, ingredients, quantity, and price
+ *      - name: res
+ *        description: response with the new menu item
+ *      
+ */
+app.post("/manMenu", async (req, res) => {
+  try {
+    console.log(req.body);
+    let { name, ing, qua, pri } = req.body;
+    console.log(ing)
+    try { ing = ing.split(",") } catch (err) { console.log(err.message); }
+    try { qua = qua.split(",") } catch (err) { }
+    console.log(ing)
+    const newStaff = await pool.query(
+      "INSERT INTO menu(name,ingredients,quantity,price) VALUES ($1,$2,$3,$4) Returning * ;", [name, ing, qua, pri]
+    );
+    console.log(req.body);
+    res.json(newStaff.rows[0]);
+  } catch (err) {
+    console.log(err.message);
+  }
+})
+
+//delete a menu item
+/**
+ * @swagger
+ * /manMenu:
+ *   delete:
+ *     summary: Deletes a menu item from the database.
+ *     parameters:
+ *      - name: req
+ *        description: Request paramater with menu item's name
+ *      - name: res
+ *        description: Confirmation that the response was removed
+ *      
+ */
+app.delete("/manMenu/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteStaff = await pool.query(
+      "DELETE FROM menu where name = $1;", [id]
+    );
+    res.json("Menu Item Removed");
+  } catch (err) {
+    console.log(err.message);
+  }
+})
+
+
+//get all menu items
+/**
+ * @swagger
+ * /manMenu:
+ *   get:
+ *     summary: Gets all items from menu table in database.
+ *     parameters:
+ *      - name: req
+ *        description: Request body with information from user's input
+ *      - name: res
+ *        description: Response body with all information stored in JSON file
+ *      
+ */
+app.get("/manMenu", async (req, res) => {
+  try {
+
+    const allStaff = await pool.query(
+      "SELECT * FROM menu;"
+    );
+    console.log(req.body);
+    res.json(allStaff.rows);
+  } catch (err) {
+    console.log(err.message);
+  }
+})
+
+//get 1 menu item
+/**
+ * @swagger
+ * /manMenu/:id:
+ *   post:
+ *     summary: Selects all instances of a single menu item from the menu
+ *     parameters:
+ *      - name: req
+ *        description: Request parameters with menu items name
+ *      - name: res
+ *        description: Response of confirmation of menu item
+ *      
+ */
+app.get("/manMenu/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(req.body);
+    const allStaff = await pool.query(
+      "SELECT * FROM menu where name  = $1;", [id]
+    );
+    res.json(allStaff.rows[0]);
+  } catch (err) {
+    console.log(err.message);
+  }
+})
+
+//udpate 1 menu item
+/**
+ * @swagger
+ * /manMenu/:id:
+ *   put:
+ *     summary: Updates a menu item if manager attempts to do so.
+ *     parameters:
+ *      - name: req
+ *        description: Request body with information about menu items name, ingredients, quantity, and price.
+ *      - name: res
+ *        description: Response body with confirmation that new item was added
+ *      
+ */
+app.put("/manMenu/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    let { name, ing, qua, pri } = req.body;
+    console.log(ing)
+    try { ing = ing.split(",") } catch (err) { }
+    try { qua = qua.split(",") } catch (err) { }
+
+
+    const updateStaff = await pool.query(
+      "UPDATE menu SET name=$1, ingredients = $2, quantity = $3, price = $4 WHERE name = $5;", [name, ing, qua, pri, id]
+    );
+    res.json("Menu item was updated");
   } catch (err) {
     console.log(err.message);
   }
