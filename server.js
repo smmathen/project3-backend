@@ -65,7 +65,7 @@ app.get("/excessReport", async (req, res) => {
   const { time } = req.body;
   try {
     const report = await pool.query("Select * from orders where tstamp >= $1;",
-    [time]
+      [time]
     );
 
     if (report.rowCount == 0) {
@@ -87,6 +87,29 @@ app.get("/excessReport", async (req, res) => {
   }
 })
 
+app.post("/salesReport", async (req, res) => {
+
+  try {
+    const { startDate, endDate } = req.body;
+    const report = await pool.query(
+      "SELECT items FROM Orders WHERE tstamp >=$1 AND tstamp<=$2;", [startDate, endDate]);
+    if (report.rowCount == 0) {
+      const msg = {
+        success: false,
+        orders: [null]
+      }
+      res.status(500).send(msg)
+    } else {
+      const msg = {
+        success: true,
+        orders: report.rows
+      }
+      res.status(200).send(msg);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 
 
@@ -164,7 +187,7 @@ app.get("/menuOrder", async (req, res) => {
  *        description: Response body with reponse back from database after input is successful.
  *      
  */
- app.post("/manInven", async (req, res) => {
+app.post("/manInven", async (req, res) => {
   try {
     console.log(req.body);
     const { name, unit, quantity, low, price } = req.body;
